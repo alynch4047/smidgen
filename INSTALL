@@ -1,0 +1,20 @@
+Currently smidgen builds on the linux 64bit platform, with dmd 2.064.
+
+First run cmake to generate the make file:
+
+$ cmake .
+
+Then run make install:
+
+$ make install
+
+The build system needs a bit of help at this point so add the built libraries to the LD_LIBRARY_PATH:
+
+export LD_LIBRARY_PATH=./install/libs
+
+then run the tests:
+
+make test
+
+Assuming the tests pass then you're ready to use smidgen to wrap your own C++ library. See the USAGE file for more information.
+
