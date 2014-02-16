@@ -1,0 +1,41 @@
+
+
+FEATURES
+========
+
+* All D
+* Understandable, maintainable code
+* Wraps protected and virtual methods, allows virtual methods to be overridden in D 
+* Mixin classes in target C++ library supported
+* Allows custom type conversions between C++ and D types
+* C++ enums mapped to D enums and are type checked in D
+* Wraps nested C++ classes
+* Tested
+* Based on the sip format. This is well proven and allows simplified maintenance of
+  wrappers for multiple versions of the target library.  (All larger target libraries will
+  need some ongoing maintenance of the wrapper regardless of the wrapping technology).
+
+
+PROVISOS
+========
+
+* Currently works with wrapped method arguments/return types of X, X* and X& 
+  but not implemented are X*& etc.
+  
+* Wrapped types which are returned by value must have a copy constructor (could be changed later)
+  
+* DO NOT capture references to (stack-based) arguments when overriding wrapped 
+  virtual methods. They are destroyed by the wrapper when the virtual method ends.
+  
+* (Qt only) When emitting signals, must use emit! notation, not just call signal.  
+  
+ GOTCHAS
+ =======
+ * An invalid getClassNameC can cause segfaults when compiling the target application because
+   it is used in template instantiation
+   
+ * If getClassName does not work for a subclass (QMoveEvent) when we are expecting T = the base class (QEvent),
+   and it was created as the base class (QEvent) (because getClassName did not work) then it casts
+   to the sub class (QMOveEvent) on a later lookup (because it is defined on the
+   other method as the return type) and crashes.  
+   

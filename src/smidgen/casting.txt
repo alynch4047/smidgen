@@ -1,0 +1,141 @@
+
+
+CPP
+===
+
+extern "C" Calculator* castRectToCalculator(Rect* rect) {
+	return rect;
+}
+
+extern "C" QPaintDevice* castQWidgetToQPaintDevice(QWidget* obj) {
+	return obj;
+}
+
+extern (C) void* castQWidgetToQPaintDevice(void* wrappedObj);
+
+
+class QPainter: WrappedObject {
+
+	this(void* wrappedObj, CreatedBy createdBy) { super(wrappedObj, createdBy); }
+
+	this(QPaintDevice arg0) {
+		writeln("Make painter 0");; stdout.flush();
+		writeln("Wrapped obj is at %s".format(arg0.wrappedObj));; stdout.flush();
+		
+		// argument is an interface type so adjust pointer to base class
+		void* arg0_wrappedObjAdjusted = getCastPointer!QPaintDevice(arg0.wrappedObj) 
+		void* qPaintDevice = castQWidgetToQPaintDevice(arg0.wrappedObj);
+		
+		wrappedObj = QPainter_QPainter_SMIX6(arg0? qPaintDevice: null);
+		writeln("Make painter 1");; stdout.flush();
+		registerWrappedObj(this, wrappedObj);
+		super(wrappedObj, CreatedBy.D);
+	}
+
+
+D
+=
+
+
+interface CastPointerProvider {
+	void* getCastPointer(T)(Object obj);
+}
+
+
+string castRectToI1(Object obj) {
+	return "CI1XX " ~ to!string(obj);
+}
+
+string castRectToI2(Object obj) {
+	return "CI2XX " ~ to!string(obj);
+}
+
+string makeCastCall(string className, string interfaceName) {
+	return "return cast%sTo%s(obj);".format(className, interfaceName);
+}
+
+class Rect: I1 {
+
+	string getCastPointer(T, U)(U obj) {
+		static if(is(U : T)) {
+//			return "I1 " ~ to!string(obj);
+			mixin(makeCastCall(U.stringof, T.stringof));
+		}
+		throw new Exception("Cannot cast a Rect to a " ~ T.stringof);
+	}
+	
+	void doI1A() {}
+	void doI1B() {}
+	
+}	
+
+
+extern (C) void* castRectToCalculator(void* wrappedObj);
+
+
+D Method
+========
+
+int useCalculator(int a, Calculator calc) {
+	void* calcPointer = getCalculatorPointer(calc);
+	int retVal = className_useCalculator_SMIX2(this, a, calcPointer);
+	return retVal;
+}
+
+
+interface CastPointerProvider {
+	void* getCastPointer(T)(Object obj);
+}
+
+
+interface Calculator: HasWrappedObject, CastPointerProvider {
+}
+
+
+class Rect:  {
+
+	void* getCastPointer(T)(Object obj) {
+		static if(is(T, Calculator)) {
+			return castRectToCalculator(obj.wrappedObj);
+		}
+		throw new InvalidCastException("Cannot cast a Rect to a " ~ T.stringof);
+	}
+	
+	void* getCastPointer(string interfaceName, Object obj) {
+		switch(interfaceName) {
+			case("Calculator"):
+				return castRectToCalculator(obj.wrappedObj);
+			default:
+				throw new InvalidCastException("Cannot cast a Rect to a " ~ interfaceName);
+		}		
+	}
+
+}
+
+===================================================================================
+
+void* getCalculatorPointer(Calculator calc) {
+	string instanceClassName = getImplementingInstanceClassName(calc, "Calculator");
+	switch (instanceClassName) {
+		case("Rect"):
+			return castRectToCalculator(calc.wrappedObj);
+		default:
+			throw new Exception();
+	}
+}
+
+/**
+* Given a list of classes that implement interfaceName, find which one
+* obj is an instance of
+*/
+string getImplementingInstanceClassName(Object obj, string interfaceName) {
+	string[] implementingClassNames = {"Rect", "Diamond"};
+	foreach(implementingClassName; implementingClassNames) {
+		if (obj.className() == implementingClassName) {
+			return implementingClass;
+		}
+	}
+	throw new Exception();
+}
+
+

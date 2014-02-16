@@ -1,0 +1,152 @@
+
+* non-primitive Typedefs
+
+* Primitive types C -> D conversion
+   - *.conf file
+    %CToDType long = long
+    %CToDType unsigned char = ubyte
+     
+* Sip If clauses for timelines      
+    %Timeline {Qt_5_0_0 Qt_5_0_1 Qt_5_0_2}
+
+
+* KeepReference for arguments + tests for Transfer etc. - Easy, in class with KeepRef
+  e.g. View.setModel(model /KeepReference/) it has an extra attribute 
+      -   void* setModel_SMIKeepRef
+      then in setModel() {
+        View_setModel_SMIX23(model.wrappedObject);
+        setModel_SMIKeepRef = model;
+      }
+      
+      This will make D keep a reference to the model as long as the View instance is alive.
+      Each view will have its own reference so the total can go above 1 for a given model.
+
+* getCastPointerForInterface can be easily improved by not switching on a name but instead
+  each class has a separate variable for each base class pointer, that is populated in
+  the constructor
+
+  - each class has one extra pointer per interface implemented 
+    - override virtual void*[] getExtraPointers() {
+        void*[] extraPointers = super.getExtraPointers();
+        extraPointers ~= wrappedObject_Calculator;
+        return extraPointers;     
+    }
+    
+  - in constructor this() {
+        wrappedObject_Calculator = castRectAsCalculator(wrappedObject);
+    }
+    
+  - in destructor ~this() {
+        deregisterWrappedObject(wrappedObject);
+        deregisterWrappedObejct(wrappedObject_Calculator);
+    }  
+    
+* instance_wrapper et al., need to also register base class pointers      
+
+* getWrappedObject / getClassName - how to handle this in a x-module fashion.  
+
+* Add support for wrapping members
+
+* Add QTest support
+
+* int arguments that take a default enum value & enum defaults
+
+* char** -> Use this _idea_
+    this(string[] args)
+    {
+        //        if (m_instance != null)
+        //            throw new RuntimeException("QCoreApplication can only be initialized once");
+
+        argc = cast(int)args.length;
+        argv = toStringzArray(args);
+        this(&argc, argv);
+
+        //        m_instance.aboutToQuit.connect(m_instance, "disposeOfMyself()");
+    }
+
+* Threading? - wrappedObjects[] should be shared as with CPP instance tracker. Use signal.d's
+  WeakRef and InvisibleAddress 
+
+* qRegisterMetaType??
+
+* Add %UsesConverter to package.sip, so that the correct includes are in the package and
+  we don't get problems trying to include e.g. widget.h in core.so  
+
+* Converted types that are returned are not passed through getWrapper - might cause
+  duplicate D objects around same C++ object e.g. QList<QWidget>? Is this a problem?
+
+* In CPP wrapper, the conversion from argument can have a memory leak (e.g. new string created
+ and not deleted)  BETTER - pass new type in as a reference if possible
+ 
+* Enums don't have C++ value if it was specified - need a CPP program that writes
+  a text file e.g. Color::Red 124
+                   Color::Green 234
+  and then write enum wrappers which include the values using the text lookup (at build time
+  of wrapper NOT at runtime of final program)         
+  
+* Operator overloading - do nicely in D
+
+* Free function operator overloads in CPP            
+  
+* Handle array arguments  
+  
+* Multiple inheritance - if a method returns an instance of an interface and it has
+  been created by CPP then the *Impl is returned - it is not currently typechecked.
+  We should instead check if it's already on a registered object.
+
+* Interfaces - allow virtual calls on the interface
+
+* Lifetime management - VTK?
+
+* VTK/ Qt differences - have factory methods for Method, Klass, Package etc., and
+  different wrapping flavours can have differing factories. Needs API stability.
+
+* Virtual functions, overloading etc. - will the right call be made if from an inherited class I make a call
+  on an inherited D class method for a virtual method - will it call the C++ base equivalent,
+  thereby not calling the correct virtual call on the derived class? See GOTW 5,
+  calling virtual funcs on a base pointer will not call the derived class method.
+  
+* Answer to above Q - yes, so need to implement wrappers for all inherited virtual functions
+  even if not mentioned in SIP file 
+
+* Signals and slots
+
+* Enums declared inside classes
+
+* In CPP wrapper class remove factory function/private constructor - it is not reqd.
+
+* Nested classes and multiple inheritance combination probably not working (e.g. Klass.getWrappedClassName)
+
+DONE
+====
+
+* Static methods
+
+* Default values
+
+* Enums
+
+* Multiple packages / modules
+
+* Nested classes e.g. QMetaObject::Connection
+
+* Transfer, TransferThis and TransferBack for arguments
+
+* Destructors - and deregister instance from createdInD
+
+* Multiple inheritance => multiple pointers 
+
+* Conversion functions in package_wrapper.cpp should have ability to add #include directives
+  at the top of package_wrapper.cpp
+  
+* Virtual functions  
+  
+* Protected functions 
+
+* Sip If clauses for features, platforms
+
+* Don't register CreatedBy.CPP objects, instead just override their hash func to
+   return the CPP pointer. This is to avoid where one CPP obj is replaced (unbeknownst to D)
+   with another at the same address. Should be OK as two D wrappers of same CPP obj
+   are functionally equivalent (no extra state possible) except if stored in e.g. AA
+   in which case give them same hash val. opEquals similarly.

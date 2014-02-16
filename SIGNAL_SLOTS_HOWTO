@@ -1,0 +1,69 @@
+
+
+To make it work with underlying signals/slots:
+=============================================
+implement static methods
+
+get QObject::connect etc. working, for underlying types
+
+e.g.
+----
+this.connect("textEdited(QString)", lbl1, "setValue(QString)");
+DONE
+
+To make it work with signals/slots declared in D
+================================================
+
+e.g. this.connect("sectionAdded(int)", myView, "updateSections");
+
+bool connect() {
+
+	// try to make connection using underlying signal / slot definitions
+	bool success = QObject_connect(....);
+	if (! success) {
+		// either signal or slot were not recognoised by underlying Qt classes
+		return doDStyleConnect(...);
+	}
+}
+
+
+bool doDStyleConnect(...) {
+	// capture info about signal/slot connection
+}
+
+SIGNAL definition in D
+void sectionAdded(int ix) {
+	// let Qt makes its slot calls for this signal
+	super.sectionAdded(ix);
+	// now let D do its slot calls
+	callDStyleConnectSlots("sectionAdded(int)");
+}
+
+On D Destructor
+===============
+Delete any connections with slots in this instance
+Delete any connections with signals from this instance
+
+
+
+PROBLEM:
+========
+
+Connecting native signal to D slot e.g.
+  connect(objA, "textChanged(Qstring)", objB, "doIt");
+  
+  where objA might be CreatedBy.D (easier) or CreatedBy.CPP (harder).
+  
+SOLUTION
+========
+Is this a slow sledgehammer? Better to use MOC? .
+
+Create CPP SignalRouter class that has a mapped D binding. Create one Router class
+for each CPP class that inherits QObject.   For each signal in the QObject class
+create a XXXSignalFired slot in the router. When a connection is made on objA to
+a D slot, connect objA.nativeSignal to router.nativeSignalFired. In router.nativeSignalFired
+call a D function SMID_nativeFunctionXXXFired(sender, args). This is then forwarded to
+all objects listening to sender/nativeFunctionXXX. NEED to maintain sender() info when
+calling slot in D.
+  
+  
