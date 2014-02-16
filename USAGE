@@ -40,6 +40,22 @@ In each class sip file, e.g. rect.sip
 * A list of member functions as found in a header file. It is not necessary
   to include all members etc., simply include the functions that you want to wrap.
 
+RUNNING SMIDGEN TO GENERATE THE WRAPPER CLASSES (D and C++)
+===========================================================
+For instance, to create the wrappers for morsel we do:
+
+$ smidgen /path/to/morsel.sip path/to/build
+
+where build is an empty subdirecctory where the cpp and d wrappers will be generated.
+
+COMPILING THE WRAPPER CLASSES AND D APPLICATION
+===============================================
+Take a look at the CMakeLists.txt files in morseld/build/cpp/morselcore and morseld/build/cpp/morselwidget/
+to see how to use cmake to compile the generated C++ wrappers into a shared library.
+
+Take a look at the CMakeLists.txt file in morseld/test and see how use_morsel.d is compiled
+using dmd and the shared C++ library generated from the C++ wrappers.
+
 USING THE WRAPPED CLASSES
 =========================
 
