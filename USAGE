@@ -40,6 +40,12 @@ In each class sip file, e.g. rect.sip
 * A list of member functions as found in a header file. It is not necessary
   to include all members etc., simply include the functions that you want to wrap.
 
+USING THE WRAPPED CLASSES
+=========================
+
+Take a look at morseld/test/use_morsel.d to see how to use the wrapped classes in
+your application code.
+
 SUGGESTION
 ==========
 Don't try to declare everything to be wrapped at once. Start with one package
