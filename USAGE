@@ -1,16 +1,23 @@
 
-N.B. First make sure that smidgen has been built before working through these instructions.
+N.B. First make sure that smidgen has been built before working through 
+these instructions.
 
-Smidgen uses the sip class description files as used by PyQt. Until I have documented the subset of sip that is available in smidgen then it is best to take a look at the morseld/sip directory to see how a C++ library is wrapped with smidgen. Note:
+Smidgen uses the sip class description files as used by PyQt. Until I have documented
+the subset of sip that is available in smidgen then it is best to take a look at the 
+morseld/sip directory to see how a C++ library is wrapped with smidgen. Note:
 
 There is one top-level sip file, in this case morsel.sip. Inside this file there is
 -----------------------------------------------------------------------------------
 
 * Registration of C++ <=> D converter specs (Optional)
 
-* The GetClassNameC code that returns the name of the C++ class for a given wrapped C++ instance (Essential IF you have wrapped classes that form a type hierarchy)
+* The GetClassNameC code that returns the name of the C++ class for a given
+  wrapped C++ instance (Essential IF you have wrapped classes that form a
+  type hierarchy)
 
-* A list of %Include declarations to sip files each of which are a sip package/module. It is suggested that you start with only one package until smidgen is a little more mature.
+* A list of %Include declarations to sip files each of which are a sip package/module.
+  It is suggested that you start with only one package until smidgen is a little
+  more mature.
 
 In each sip file for a package (e.g. morselcode_mod.sip) there is
 -----------------------------------------------------------------
@@ -26,16 +33,23 @@ In each class sip file, e.g. rect.sip
 
 * A sip style class wrapper definition, very similar to a .h file
 
-* With the class definition a %TypeHeaderCode section that gives C++ code that will be needed to compile the C++ wrapper for this class, usually a header include.
+* With the class definition a %TypeHeaderCode section that gives C++ code
+  that will be needed to compile the C++ wrapper for this class, usually 
+  a header include.
 
-* A list of member functions as found in a header file. It is not necessary to include all members etc., simply include the functions that you want to wrap.
+* A list of member functions as found in a header file. It is not necessary
+  to include all members etc., simply include the functions that you want to wrap.
 
 SUGGESTION
 ==========
-Don't try to declare everything to be wrapped at once. Start with one package and one class with a few member functions. Once you have that working, add more classes and member functions. Pay attention to the sip file 'grammar' and follow it closely.
+Don't try to declare everything to be wrapped at once. Start with one package
+and one class with a few member functions. Once you have that working,
+add more classes and member functions. Pay attention to the sip file 'grammar'
+and follow it closely.
 
 QUESTIONS
 =========
-I haven't started work on the documentation, so please post any questions on the forums and I will try to get back to you as soon as possible.
+I haven't started work on the documentation, so please post any questions
+on the forums and I will try to get back to you as soon as possible.
 
 
