@@ -353,6 +353,9 @@ class MethodImpl: Method {
 		safeName = safeName.replace("/", "div");
 		safeName = safeName.replace("*", "times");
 		safeName = safeName.replace("!", "not");
+		safeName = safeName.replace("&", "and");
+		safeName = safeName.replace("^", "xor");
+		safeName = safeName.replace("~", "bnot");
 		
 		if (safeName == "destroy") {
 			safeName = "destroy_";
