@@ -10,7 +10,7 @@ $ make install
 
 The build system needs a bit of help at this point so add the built libraries to the LD_LIBRARY_PATH:
 
-export LD_LIBRARY_PATH=./install/libs
+$ export LD_LIBRARY_PATH=./install/libs
 
 then run the tests:
 
