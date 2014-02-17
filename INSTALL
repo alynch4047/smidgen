@@ -14,13 +14,13 @@ export LD_LIBRARY_PATH=./install/libs
 
 then run the tests:
 
-make test
+$ make test
 
 Assuming the tests pass then you're ready to use smidgen to wrap your own C++ library. See the USAGE file for more information.
 
 If the tests fail then do
 
-cat Testing/Temporary/LastTest.log
+$ cat Testing/Temporary/LastTest.log
 
 from the smidgen directory to see a log. Post it to the forum if the problem is not clear to you.
 
